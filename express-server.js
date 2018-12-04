@@ -21,6 +21,12 @@ app.get("/urls", (req, res) => {
   res.render("urls-index", templateVars);
 });
 
+app.get("/urls/:id", (req, res) => {
+  let templateVars = { shortURL: req.params.id,
+                        longURL: urlDatabase[req.params.id]};
+  res.render("urls-show", templateVars);
+});
+
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
