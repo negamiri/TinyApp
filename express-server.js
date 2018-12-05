@@ -52,7 +52,7 @@ app.listen(port, () => {
 
 //Create a random string for short url
 //Limitations: could be a duplicate as we're not checking for existing values
-//Random generated letters letters only currently go through a-f
+//Generates only lower case letters
 function generateRandomString () {
-  return Math.floor((1 + Math.random()) * 0x100000).toString(16);
+  return Math.floor((1 + Math.random()) * 0x100000).toString(36);
 }
