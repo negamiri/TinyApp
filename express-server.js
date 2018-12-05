@@ -39,14 +39,14 @@ app.post("/urls", (req, res) => {
   var longURL = req.body.longURL;
   var shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL;
-  res.redirect(`/urls/${shortURL}`);
+  res.redirect(301, `/urls/${shortURL}`);
 });
 
 //Takes short URL and redirects to long URL
 app.get("/u/:shortURL", (req, res) => {
   var shorturl = req.params.shortURL;
   var longURL = urlDatabase[shorturl];
-  res.redirect(longURL);
+  res.redirect(301, longURL);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -66,7 +66,11 @@ app.listen(port, () => {
 
 //Create a random string for short url
 //Limitations: could be a duplicate as we're not checking for existing values
-//Generates only lower case letters
 function generateRandomString () {
-  return Math.floor((1 + Math.random()) * 1000000000).toString(36);
+  var string = ('123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  var randomString = '';
+  for (var i = 0; i < 6; i++){
+    randomString += string.charAt(Math.floor(Math.random() * string.length));
+  }
+  return randomString;
 }
