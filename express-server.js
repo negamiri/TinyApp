@@ -26,10 +26,14 @@ app.get("/urls", (req, res) => {
   res.render("urls-index", templateVars);
 });
 
+//Form for creating short URL
 app.get("/urls/new", (req, res) => {
   res.render("urls-new");
 });
 
+//After filling in form:
+//Adds long and short URL to URLdatabase
+//Redirects to /urls/{shortURL} page to show long and short url
 app.post("/urls", (req, res) => {
   console.log(req.body);
   var longURL = req.body.longURL;
@@ -38,6 +42,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+//Takes short URL and redirects to long URL
 app.get("/u/:shortURL", (req, res) => {
   var shorturl = req.params.shortURL;
   var longURL = urlDatabase[shorturl];
@@ -54,6 +59,7 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+//To ensure server is running
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`);
 });
