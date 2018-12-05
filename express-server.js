@@ -21,7 +21,6 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-
 app.get("/urls", (req, res) => {
   var templateVars = { urls: urlDatabase}
   res.render("urls-index", templateVars);
@@ -33,7 +32,16 @@ app.get("/urls/new", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body);
-  res.send("Ok.");
+  var longURL = req.body.longURL;
+  var shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL;
+  res.redirect(`/urls/${shortURL}`);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  var shorturl = req.params.shortURL;
+  var longURL = urlDatabase[shorturl];
+  res.redirect(longURL);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -54,5 +62,5 @@ app.listen(port, () => {
 //Limitations: could be a duplicate as we're not checking for existing values
 //Generates only lower case letters
 function generateRandomString () {
-  return Math.floor((1 + Math.random()) * 0x100000).toString(36);
+  return Math.floor((1 + Math.random()) * 1000000000).toString(36);
 }
