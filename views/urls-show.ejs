@@ -7,17 +7,23 @@
 
 <body>
 
-<h2>Congratulations! Your short URL has been created.</h2>
+<h2>Your short URL has been created.</h2>
 
 <table cellpadding="5px">
   <tr>
-    <td>Original URL:</td>
-    <td><a href="<%= longURL%>"><%= longURL%></a></td>
+    <td><h4>Original URL</h4></td>
+    <td><h4>Short URL</h4></td>
+    <td><h4>Actions</h4></td>
   </tr>
 
   <tr>
-    <td>Short URL:</td>
+    <td><a href="<%= longURL%>"><%= longURL%></a></td>
     <td><%= '/urls/' + shortURL %></td>
+    <td><form action="/urls/<%= shortURL %>/update" method="POST">
+      <label for="longURL">Update long URL:</label>
+      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
+      <input type="submit" value="Update">
+    </form></td>
   </td>
 
 

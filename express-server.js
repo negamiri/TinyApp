@@ -35,7 +35,6 @@ app.get("/urls/new", (req, res) => {
 //Adds long and short URL to URLdatabase
 //Redirects to /urls/{shortURL} page to show long and short url
 app.post("/urls", (req, res) => {
-  console.log(req.body);
   let longURL = req.body.longURL;
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL;
@@ -58,6 +57,14 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id,
                         longURL: urlDatabase[req.params.id]};
   res.render("urls-show", templateVars);
+});
+
+//Update
+app.post("/urls/:id/update", (req, res) => {
+  let shorturl = req.params.id;
+  let longurl = req.body.longURL;
+  urlDatabase[shorturl] = longurl;
+  res.redirect(301, "/urls");
 });
 
 //Delete
