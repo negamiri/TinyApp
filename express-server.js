@@ -1,14 +1,14 @@
 "use strict";
 
-var express = require("express");
-var app = express();
-var port = 8080; // default port 8080
-var bodyParser = require("body-parser");
+let express = require("express");
+let app = express();
+let port = 8080; // default port 8080
+let bodyParser = require("body-parser");
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
-var urlDatabase = {
+let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
@@ -22,7 +22,7 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  var templateVars = { urls: urlDatabase}
+  let templateVars = { urls: urlDatabase}
   res.render("urls-index", templateVars);
 });
 
@@ -36,21 +36,21 @@ app.get("/urls/new", (req, res) => {
 //Redirects to /urls/{shortURL} page to show long and short url
 app.post("/urls", (req, res) => {
   console.log(req.body);
-  var longURL = req.body.longURL;
-  var shortURL = generateRandomString();
+  let longURL = req.body.longURL;
+  let shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL;
   res.redirect(301, `/urls/${shortURL}`);
 });
 
 //Takes short URL and redirects to long URL
 app.get("/u/:shortURL", (req, res) => {
-  var shorturl = req.params.shortURL;
-  var longURL = urlDatabase[shorturl];
+  let shorturl = req.params.shortURL;
+  let longURL = urlDatabase[shorturl];
   res.redirect(301, longURL);
 });
 
 app.get("/urls/:id", (req, res) => {
-  var templateVars = { shortURL: req.params.id,
+  let templateVars = { shortURL: req.params.id,
                         longURL: urlDatabase[req.params.id]};
   res.render("urls-show", templateVars);
 });
@@ -67,9 +67,9 @@ app.listen(port, () => {
 //Create a random string for short url
 //Limitations: could be a duplicate as we're not checking for existing values
 function generateRandomString () {
-  var string = ('123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-  var randomString = '';
-  for (var i = 0; i < 6; i++){
+  let string = ('123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  let randomString = '';
+  for (let i = 0; i < 6; i++){
     randomString += string.charAt(Math.floor(Math.random() * string.length));
   }
   return randomString;
