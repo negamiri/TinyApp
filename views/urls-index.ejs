@@ -7,13 +7,22 @@
 
 <body>
 
-<ul>
+<table cellpadding="8px">
   <% for (let url in urls) { %>
-    <li> <%= url %>: <%= urls[url] %>
+  <% var deleteURL = `/urls/${url}/delete` %>
+  <form method="POST" action= <%= deleteURL %> >
+  <tr>
+    <td><%= url %> &rarr;</td>
+    <td><a href="<%= urls[url] %>"><%= urls[url] %></a></td>
+    <td><input type = "submit" value = "Delete"></td>
+  </tr>
+  </form>
   <% } %>
-</ul>
-
-<a href="/">Generate short URL</a>
+</table>
+</br>
+</br>
+</br>
+<button type = "button" padding="10px"><a href="./urls/new">Generate short URL</a></button>
 
 </body>
 

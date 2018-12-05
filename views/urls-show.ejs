@@ -7,11 +7,18 @@
 
 <body>
 
+<h2>Congratulations! Your short URL has been created.</h2>
 
-<ul>
-    <li> Long URL: <%= longURL%></li>
-    <li> Short URL: <%= '/urls/' + shortURL %></li>
-</ul>
+<table cellpadding="5px">
+  <tr>
+    <td>Original URL:</td>
+    <td><a href="<%= longURL%>"><%= longURL%></a></td>
+  </tr>
+
+  <tr>
+    <td>Short URL:</td>
+    <td><%= '/urls/' + shortURL %></td>
+  </td>
 
 
 </body>

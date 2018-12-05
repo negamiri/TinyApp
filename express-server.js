@@ -1,9 +1,9 @@
 "use strict";
 
-let express = require("express");
-let app = express();
-let port = 8080; // default port 8080
-let bodyParser = require("body-parser");
+const express = require("express");
+const app = express();
+const port = 8080; // default port 8080
+const bodyParser = require("body-parser");
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
@@ -22,7 +22,7 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase}
+  const templateVars = { urls: urlDatabase}
   res.render("urls-index", templateVars);
 });
 
@@ -46,7 +46,12 @@ app.post("/urls", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   let shorturl = req.params.shortURL;
   let longURL = urlDatabase[shorturl];
-  res.redirect(301, longURL);
+  if (shortURL) {
+    res.redirect(301, longURL);
+  } else {
+    res.status('400');
+    res.render('notfound');
+  }
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -54,6 +59,14 @@ app.get("/urls/:id", (req, res) => {
                         longURL: urlDatabase[req.params.id]};
   res.render("urls-show", templateVars);
 });
+
+//Delete
+app.post("/urls/:id/delete", (req, res) => {
+  let shorturl = req.params.id;
+  delete urlDatabase[shorturl];
+  res.redirect(301, "/urls");
+});
+
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
