@@ -13,6 +13,7 @@ let urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//Homepage
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -21,18 +22,18 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+//READ list of all our URLs
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase}
   res.render("urls-index", templateVars);
 });
 
-//Form for creating short URL
+//READ form for creating new URLs
 app.get("/urls/new", (req, res) => {
   res.render("urls-new");
 });
 
-//After filling in form:
-//Adds long and short URL to URLdatabase
+//CREATE short URL
 //Redirects to /urls/{shortURL} page to show long and short url
 app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
@@ -41,7 +42,7 @@ app.post("/urls", (req, res) => {
   res.redirect(301, `/urls/${shortURL}`);
 });
 
-//Takes short URL and redirects to long URL
+//READ short URL and redirect to long URL
 app.get("/u/:shortURL", (req, res) => {
   let shorturl = req.params.shortURL;
   let longURL = urlDatabase[shorturl];
@@ -53,13 +54,14 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
+//READ page of short URL
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id,
                         longURL: urlDatabase[req.params.id]};
   res.render("urls-show", templateVars);
 });
 
-//Update
+//UPDATE existing URL
 app.post("/urls/:id/update", (req, res) => {
   let shorturl = req.params.id;
   let longurl = req.body.longURL;
@@ -67,7 +69,7 @@ app.post("/urls/:id/update", (req, res) => {
   res.redirect(301, "/urls");
 });
 
-//Delete
+//DELETE existing long url
 app.post("/urls/:id/delete", (req, res) => {
   let shorturl = req.params.id;
   delete urlDatabase[shorturl];
@@ -75,9 +77,9 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+// app.get("/hello", (req, res) => {
+//   res.send("<html><body>Hello <b>World</b></body></html>\n");
+// });
 
 //To ensure server is running
 app.listen(port, () => {

@@ -5,26 +5,14 @@
     <% include partials/_header %>
 </header>
 
-<body>
+<body leftmargin="100px", topmargin="100px">
 
-<h2>Your short URL has been created.</h2>
-
-<table cellpadding="5px">
-  <tr>
-    <td><h4>Original URL</h4></td>
-    <td><h4>Short URL</h4></td>
-    <td><h4>Actions</h4></td>
-  </tr>
-
-  <tr>
-    <td><a href="<%= longURL%>"><%= longURL%></a></td>
-    <td><%= '/urls/' + shortURL %></td>
-    <td><form action="/urls/<%= shortURL %>/update" method="POST">
-      <label for="longURL">Update long URL:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
-      <input type="submit" value="Update">
-    </form></td>
-  </td>
+<h2>Short URL: <%= shortURL %></h2>
+</br>
+<form action="/urls/<%= shortURL %>/update" method="POST">
+  <input id="longURL" type="text" name="longURL" placeholder="<%= longURL%>" style="height: 30px; width: 300px">
+  <input type="submit" value="Update">
+</form>
 
 
 </body>
