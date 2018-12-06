@@ -39,21 +39,24 @@ app.get("/urls.json", (req, res) => {
 
 //READ list of all our URLs
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase }
+  const templateVars = { urls: urlDatabase,
+                          user: users[req.cookies.userid] };
   res.render("urls-index", templateVars);
 });
 
 //READ form for creating new URLs
 app.get("/urls/new", (req, res) => {
-  res.render("urls-new");
+  let templateVars = { user: users[req.cookies.userid] }
+  res.render("urls-new", templateVars);
 });
 
 //READ login
 app.get("/login", (req, res) => {
-  res.render("login")
+  let templateVars = { user: users[req.cookies.userid] }
+  res.render("login", templateVars)
 })
 
-//CREATE username
+//CREATE login
 app.post('/login', (req, res) => {
   if (req.body["email"] == "" || req.body["password"] == ""){
     res.status('400');
@@ -97,13 +100,15 @@ app.get("/u/:shortURL", (req, res) => {
 //READ page of short URL
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id,
-                        longURL: urlDatabase[req.params.id]};
+                        longURL: urlDatabase[req.params.id],
+                        user: users[req.cookies.userid]};
   res.render("urls-show", templateVars);
 });
 
 //READ registration page
 app.get("/register", (req, res) => {
-  res.render("registration");
+  let templateVars = { user: users[req.cookies.userid] }
+  res.render("registration", templateVars);
 });
 
 //CREATE registration
