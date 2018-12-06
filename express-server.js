@@ -65,7 +65,7 @@ app.post('/login', (req, res) => {
     res.cookie("userid", grabId(req.body.email));
     res.redirect(302, "/urls/");
   } else {
-    res.redirect('/login')
+    res.render('login', { errorfeedback: 'Failed to find a user.' })
   }
 });
 
