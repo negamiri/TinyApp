@@ -102,24 +102,22 @@ app.get("/register", (req, res) => {
 
 //CREATE registration
 app.post("/register", (req, res) => {
-  for (var key in users) {
-    if (req.body["email"] == "" || req.body["password"] == ""){
+  if (req.body["email"] == "" || req.body["password"] == ""){
+    res.status('400');
+    res.send("Please provide an email and password to register")
+  } else if (emailTaken(req)) {
       res.status('400');
-      res.send('No email or password provided')
-    } else if (req.body["email"] === users[key].email) {
-      res.status('400');
-      res.send('Email already in use')
-    } else {
+      res.send("Emaill already in use")
+  } else {
       let id = generateRandomString();
       users[id] = {
         "id": id,
         "email": req.body["email"],
         "password": req.body["password"],
-      }
-      res.cookie("userid", users[id].id);
-      res.redirect(302, "/urls/");
   }
-}
+  res.cookie("userid", users[id].id);
+  res.redirect(302, "/urls/");
+  }
 });
 
 //UPDATE existing URL
@@ -156,4 +154,15 @@ function generateRandomString () {
     randomString += string.charAt(Math.floor(Math.random() * string.length));
   }
   return randomString;
+}
+
+//Check if email has been taken
+function emailTaken(req) {
+  let emailEntered = req.body.email;
+  for (let key in users){
+    if (users[key].email.toLowerCase() == emailEntered.toLowerCase()) {
+      return true;
+    }
+  }
+  return false;
 }
