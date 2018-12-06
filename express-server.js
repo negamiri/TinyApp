@@ -46,6 +46,12 @@ app.post('/login', (req, res) => {
   res.redirect(302, "/urls/");
 });
 
+//CREATE logout
+app.post('/logout', (req, res) => {
+  res.clearCookie("username");
+  res.redirect(302, "/urls/");
+});
+
 //CREATE short URL
 //Redirects to /urls/{shortURL} page to show long and short url
 app.post("/urls", (req, res) => {
