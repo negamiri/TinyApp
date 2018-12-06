@@ -53,7 +53,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 
-//CREATE login
+//CREATE username
 app.post('/login', (req, res) => {
   let username = req.body.username;
   res.cookie("username", username);
@@ -79,10 +79,10 @@ app.post("/urls", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   let shorturl = req.params.shortURL;
   let longURL = urlDatabase[shorturl];
-  if (shortURL) {
+  if (shorturl) {
     res.redirect(302, longURL);
   } else {
-    res.status('400');
+    res.status('404');
     res.render('notfound');
   }
 });
@@ -102,14 +102,24 @@ app.get("/register", (req, res) => {
 
 //CREATE registration
 app.post("/register", (req, res) => {
-  let id = generateRandomString();
-  users[id] = {
-    "id": id,
-    "email": req.body["email"],
-    "password": req.body["password"],
+  for (var key in users) {
+    if (req.body["email"] == "" || req.body["password"] == ""){
+      res.status('400');
+      res.send('No email or password provided')
+    } else if (req.body["email"] === users[key].email) {
+      res.status('400');
+      res.send('Email already in use')
+    } else {
+      let id = generateRandomString();
+      users[id] = {
+        "id": id,
+        "email": req.body["email"],
+        "password": req.body["password"],
+      }
+      res.cookie("userid", users[id].id);
+      res.redirect(302, "/urls/");
   }
-  res.cookie("userid", users[id].id);
-  res.redirect(302, "/urls/");
+}
 });
 
 //UPDATE existing URL
