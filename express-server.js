@@ -4,9 +4,11 @@ const express = require("express");
 const app = express();
 const port = 8080; // default port 8080
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
+app.use(cookieParser());
 
 let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -24,13 +26,31 @@ app.get("/urls.json", (req, res) => {
 
 //READ list of all our URLs
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase}
+  const templateVars = { urls: urlDatabase,
+                          username: req.cookies["username"]}
   res.render("urls-index", templateVars);
 });
 
 //READ form for creating new URLs
 app.get("/urls/new", (req, res) => {
-  res.render("urls-new");
+  let templateVars = {
+    username: req.cookies["username"],
+  };
+  res.render("urls-new", templateVars);
+});
+
+
+//CREATE login
+app.post('/login', (req, res) => {
+  let username = req.body.username;
+  res.cookie("username", username);
+  res.redirect(302, "/urls/");
+});
+
+//CREATE logout
+app.post('/logout', (req, res) => {
+  res.clearCookie("username");
+  res.redirect(302, "/urls/");
 });
 
 //CREATE short URL
@@ -39,7 +59,7 @@ app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL;
-  res.redirect(301, `/urls/${shortURL}`);
+  res.redirect(302, `/urls/${shortURL}`);
 });
 
 //READ short URL and redirect to long URL
@@ -47,7 +67,7 @@ app.get("/u/:shortURL", (req, res) => {
   let shorturl = req.params.shortURL;
   let longURL = urlDatabase[shorturl];
   if (shortURL) {
-    res.redirect(301, longURL);
+    res.redirect(302, longURL);
   } else {
     res.status('400');
     res.render('notfound');
@@ -57,7 +77,8 @@ app.get("/u/:shortURL", (req, res) => {
 //READ page of short URL
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id,
-                        longURL: urlDatabase[req.params.id]};
+                        longURL: urlDatabase[req.params.id],
+                        username: req.cookies["username"]};
   res.render("urls-show", templateVars);
 });
 
@@ -66,14 +87,14 @@ app.post("/urls/:id/update", (req, res) => {
   let shorturl = req.params.id;
   let longurl = req.body.longURL;
   urlDatabase[shorturl] = longurl;
-  res.redirect(301, "/urls");
+  res.redirect(302, "/urls");
 });
 
 //DELETE existing long url
 app.post("/urls/:id/delete", (req, res) => {
   let shorturl = req.params.id;
   delete urlDatabase[shorturl];
-  res.redirect(301, "/urls");
+  res.redirect(302, "/urls");
 });
 
 
