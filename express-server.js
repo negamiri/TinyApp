@@ -70,10 +70,10 @@ app.post('/login', (req, res) => {
 });
 
 //CREATE logout
-// app.post('/logout', (req, res) => {
-//   res.clearCookie("userid");
-//   res.redirect(302, "/urls/");
-// });
+app.post('/logout', (req, res) => {
+  res.clearCookie("userid");
+  res.redirect(302, "/urls/");
+});
 
 
 //CREATE short URL
