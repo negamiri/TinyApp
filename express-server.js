@@ -15,6 +15,19 @@ let urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  "23ABC": {
+    id: "23ABC",
+    email: "user@example.com",
+    password: "user123"
+  },
+  "45DEF": {
+    id: "45DEF",
+    email: "user@test.com",
+    password: "test2343"
+  }
+};
+
 //Homepage
 app.get("/", (req, res) => {
   res.send("Hello!");
