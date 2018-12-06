@@ -39,32 +39,39 @@ app.get("/urls.json", (req, res) => {
 
 //READ list of all our URLs
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase,
-                          username: req.cookies["username"]}
+  const templateVars = { urls: urlDatabase }
   res.render("urls-index", templateVars);
 });
 
 //READ form for creating new URLs
 app.get("/urls/new", (req, res) => {
-  let templateVars = {
-    username: req.cookies["username"],
-  };
-  res.render("urls-new", templateVars);
+  res.render("urls-new");
 });
 
+//READ login
+app.get("/login", (req, res) => {
+  res.render("login")
+})
 
 //CREATE username
 app.post('/login', (req, res) => {
-  let username = req.body.username;
-  res.cookie("username", username);
-  res.redirect(302, "/urls/");
+  if (req.body["email"] == "" || req.body["password"] == ""){
+    res.status('400');
+    res.send("Please provide an email and password to login")
+  } else if (checkLogin(req)) {
+    res.cookie("userid", grabId(req.body.email));
+    res.redirect(302, "/urls/");
+  } else {
+    res.redirect('/login')
+  }
 });
 
 //CREATE logout
-app.post('/logout', (req, res) => {
-  res.clearCookie("username");
-  res.redirect(302, "/urls/");
-});
+// app.post('/logout', (req, res) => {
+//   res.clearCookie("userid");
+//   res.redirect(302, "/urls/");
+// });
+
 
 //CREATE short URL
 //Redirects to /urls/{shortURL} page to show long and short url
@@ -90,8 +97,7 @@ app.get("/u/:shortURL", (req, res) => {
 //READ page of short URL
 app.get("/urls/:id", (req, res) => {
   let templateVars = { shortURL: req.params.id,
-                        longURL: urlDatabase[req.params.id],
-                        username: req.cookies["username"]};
+                        longURL: urlDatabase[req.params.id]};
   res.render("urls-show", templateVars);
 });
 
@@ -160,9 +166,29 @@ function generateRandomString () {
 function emailTaken(req) {
   let emailEntered = req.body.email;
   for (let key in users){
-    if (users[key].email.toLowerCase() == emailEntered.toLowerCase()) {
+    if (users[key].email.toLowerCase() === emailEntered.toLowerCase()) {
       return true;
     }
   }
   return false;
+}
+
+function checkLogin(req) {
+  let emailEntered = req.body.email;
+  let passwordEntered = req.body.password;
+  for (let key in users) {
+    if (users[key].email.toLowerCase() === emailEntered.toLowerCase() && users[key].password === passwordEntered){
+      return true;
+    }
+  }
+  return false;
+}
+
+function grabId (email) {
+  for (let key in users) {
+    const user = users[key];
+    if (user.email === email) {
+      return user.id;
+    }
+  }
 }
