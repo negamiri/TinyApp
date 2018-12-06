@@ -15,7 +15,7 @@ let urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = {
+let users = {
   "23ABC": {
     id: "23ABC",
     email: "user@example.com",
@@ -102,10 +102,13 @@ app.get("/register", (req, res) => {
 
 //CREATE registration
 app.post("/register", (req, res) => {
-  let email = req.body["email"];
-  let password = req.body["password"];
-  res.cookie("email", email);
-  res.cookie("password", password);
+  let id = generateRandomString();
+  users[id] = {
+    "id": id,
+    "email": req.body["email"],
+    "password": req.body["password"],
+  }
+  res.cookie("userid", users[id].id);
   res.redirect(302, "/urls/");
 });
 
