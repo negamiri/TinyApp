@@ -82,6 +82,20 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls-show", templateVars);
 });
 
+//READ registration page
+app.get("/register", (req, res) => {
+  res.render("registration");
+});
+
+//CREATE registration
+app.post("/register", (req, res) => {
+  let email = req.body["email"];
+  let password = req.body["password"];
+  res.cookie("email", email);
+  res.cookie("password", password);
+  res.redirect(302, "/urls/");
+});
+
 //UPDATE existing URL
 app.post("/urls/:id/update", (req, res) => {
   let shorturl = req.params.id;
