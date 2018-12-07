@@ -47,7 +47,11 @@ app.get("/urls", (req, res) => {
 //READ form for creating new URLs
 app.get("/urls/new", (req, res) => {
   let templateVars = { user: users[req.cookies.userid] }
-  res.render("urls-new", templateVars);
+  if (templateVars.user) {
+    res.render("urls-new", templateVars);
+  } else {
+    res.render("login");
+  }
 });
 
 //READ login
