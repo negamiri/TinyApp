@@ -5,27 +5,32 @@ const app = express();
 const port = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(cookieParser());
 
 const urlDatabase = {
-  "b2xVn2": {longurl: "http://www.lighthouselabs.ca",
-              userid: "23ABC"
-            },
+  "b2xVn2": {
+    longurl: "http://www.lighthouselabs.ca",
+    userid: "23ABC"
+  },
 
-  "9sm5xK": {longurl: "http://www.google.com",
-              userid: "45DEF"
-            },
+  "9sm5xK": {
+    longurl: "http://www.google.com",
+    userid: "45DEF"
+  },
 
-  "b2xVUS2": {longurl: "http://www.lighthouse.org",
-              userid: "23ABC"
-            },
+  "b2xVUS2": {
+    longurl: "http://www.lighthouse.org",
+    userid: "23ABC"
+  },
 
-  "b2nYn2": {longurl: "http://www.lightS.ca",
-            userid: "23ABC"
-          },
+  "b2nYn2": {
+    longurl: "http://www.lightS.ca",
+    userid: "23ABC"
+  },
 };
 
 const users = {
@@ -34,6 +39,7 @@ const users = {
     email: "user@example.com",
     password: "user123"
   },
+
   "45DEF": {
     id: "45DEF",
     email: "user@test.com",
@@ -54,7 +60,9 @@ app.get("/urls.json", (req, res) => {
 
 //READ login
 app.get("/login", (req, res) => {
-  let templateVars = { user: users[req.cookies.userid] }
+  let templateVars = {
+    user: users[req.cookies.userid]
+  }
   res.render("login", templateVars)
 })
 
@@ -79,13 +87,15 @@ app.post('/logout', (req, res) => {
 
 //READ registration page
 app.get("/register", (req, res) => {
-  let templateVars = { user: users[req.cookies.userid] }
+  let templateVars = {
+    user: users[req.cookies.userid]
+  }
   res.render("registration", templateVars);
 });
 
 //CREATE registration
 app.post("/register", (req, res) => {
-  if (req.body["email"] == "" || req.body["password"] == ""){
+  if (req.body.email == "" || req.body.password == ""){
     res.status('400');
     res.send("Please provide an email and password to register")
   } else if (emailTaken(req)) {
@@ -95,12 +105,12 @@ app.post("/register", (req, res) => {
       let id = generateRandomString();
       users[id] = {
         "id": id,
-        "email": req.body["email"],
-        "password": req.body["password"],
-  }
-  res.cookie("userid", users[id].id);
-  res.redirect(302, "/urls/");
-  }
+        "email": req.body.email,
+        "password": bcrypt.hashSync(req.body.password, 10),
+      }
+      res.cookie("userid", users[id].id);
+      res.redirect("/urls/");
+    }
 });
 
 
@@ -110,8 +120,12 @@ app.get("/urls", (req, res) => {
       urls: urlsForUser(req.cookies.userid),
       user: users[req.cookies.userid]
   };
-  //console.log("TESTING ",templateVars);
-  res.render("urls-index", templateVars);
+
+  if (templateVars.user) {
+    res.render("urls-index", templateVars);
+  } else {
+    res.redirect("/login")
+  }
 });
 
 //READ form for creating new URLs
@@ -134,7 +148,7 @@ app.post("/urls", (req, res) => {
     longurl: longURL,
     userid: req.cookies.userid
   };
-  res.redirect(302, `/urls/${shortURL}`);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 //READ short URL and redirect to long URL
@@ -151,16 +165,23 @@ app.get("/u/:shortURL", (req, res) => {
 
 //READ page of short URL
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id,
-                        longURL: urlDatabase[req.params.id].longurl,
-                        user: users[req.cookies.userid]};
+  let templateVars = {
+    shortURL: req.params.id,
+    longURL: urlDatabase[req.params.id].longurl,
+    user: users[req.cookies.userid]
+  };
+
+  if (templateVars.user) {
   res.render("urls-show", templateVars);
+  } else {
+    res.render("login");
+  }
 });
 
 //UPDATE existing URL
 app.post("/urls/:id/update", (req, res) => {
   let shorturl = req.params.id;
-  urlDatabase[shorturl].longurl = req.body.longURL;
+   urlDatabase[shorturl].longurl = req.body.longURL;
   res.redirect("/urls");
 });
 
@@ -168,7 +189,7 @@ app.post("/urls/:id/update", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   let shorturl = req.params.id;
   delete urlDatabase[shorturl];
-  res.redirect(302, "/urls");
+  res.redirect("/urls");
 });
 
 
@@ -205,9 +226,8 @@ function emailTaken(req) {
 
 function checkLogin(req) {
   let emailEntered = req.body.email;
-  let passwordEntered = req.body.password;
   for (let key in users) {
-    if (users[key].email.toLowerCase() === emailEntered.toLowerCase() && users[key].password === passwordEntered){
+    if (users[key].email.toLowerCase() === emailEntered.toLowerCase() && bcrypt.compareSync(req.body.password, users[key].password)){
       return true;
     }
   }
