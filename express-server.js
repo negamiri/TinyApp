@@ -4,12 +4,15 @@ const express = require("express");
 const app = express();
 const port = 8080; // default port 8080
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['userid'],
+}))
 
 const urlDatabase = {
   "b2xVn2": {
@@ -61,7 +64,7 @@ app.get("/urls.json", (req, res) => {
 //READ login
 app.get("/login", (req, res) => {
   let templateVars = {
-    user: users[req.cookies.userid]
+    user: users[req.session.userid]
   }
   res.render("login", templateVars)
 })
@@ -72,7 +75,7 @@ app.post('/login', (req, res) => {
     res.status('400');
     res.send("Please provide an email and password to login")
   } else if (checkLogin(req)) {
-    res.cookie("userid", grabId(req.body.email));
+    req.session.userid = grabId(req.body.email);
     res.redirect("/urls/");
   } else {
     res.render('login', { errorfeedback: 'Failed to find a user.' })
@@ -81,14 +84,14 @@ app.post('/login', (req, res) => {
 
 //CREATE logout
 app.post('/logout', (req, res) => {
-  res.clearCookie("userid");
+  req.session = null;
   res.redirect(302, "/urls/");
 });
 
 //READ registration page
 app.get("/register", (req, res) => {
   let templateVars = {
-    user: users[req.cookies.userid]
+    user: users[req.session.userid]
   }
   res.render("registration", templateVars);
 });
@@ -108,7 +111,7 @@ app.post("/register", (req, res) => {
         "email": req.body.email,
         "password": bcrypt.hashSync(req.body.password, 10),
       }
-      res.cookie("userid", users[id].id);
+      req.session.userid = users[id].id;
       res.redirect("/urls/");
     }
 });
@@ -117,8 +120,8 @@ app.post("/register", (req, res) => {
 //READ list of all our URLs
 app.get("/urls", (req, res) => {
   const templateVars = {
-      urls: urlsForUser(req.cookies.userid),
-      user: users[req.cookies.userid]
+      urls: urlsForUser(req.session.userid),
+      user: users[req.session.userid]
   };
 
   if (templateVars.user) {
@@ -130,7 +133,7 @@ app.get("/urls", (req, res) => {
 
 //READ form for creating new URLs
 app.get("/urls/new", (req, res) => {
-  let templateVars = { user: users[req.cookies.userid] }
+  let templateVars = { user: users[req.session.userid] }
   if (templateVars.user) {
     res.render("urls-new", templateVars);
   } else {
@@ -146,7 +149,7 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = {
     longurl: longURL,
-    userid: req.cookies.userid
+    userid: req.session.userid
   };
   res.redirect(`/urls/${shortURL}`);
 });
@@ -168,7 +171,7 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id].longurl,
-    user: users[req.cookies.userid]
+    user: users[req.session.userid]
   };
 
   if (templateVars.user) {
