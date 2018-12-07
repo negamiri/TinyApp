@@ -1,29 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <title>Header</title>
-  </head>
-
-
-<body leftmargin="80px", topmargin="80px">
-
   <% if (user) { %>
   <p> You are logged in as <strong> <%= user.email %> </strong>
     <form action="/logout" method="POST" >
-    <input type="submit" value="Log out"></p>
+      <input type="submit" value="Log out"></p>
+    </form>
   <% } else { %>
 
   <a href="/login">Login</a>
   <a href="/register">Register</a>
 
 <% } %>
-
-</br>
-</br>
-
-
-
-</body>
-
-</html>

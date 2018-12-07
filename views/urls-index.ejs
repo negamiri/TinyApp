@@ -13,17 +13,16 @@
 
 <table cellpadding="8px">
   <% for (let url in urls) { %>
-  <% var deleteURL = `/urls/${url}/delete` %>
-  <form method="POST" action= <%= deleteURL %> >
-  <tr>
-    <td><%= url %> &rarr;</td>
-    <td><a href="<%= urls[url] %>"><%= urls[url] %></a></td>
-    <td>
-      <a href="/urls/<%= url %>">Edit</a>
-      <input type = "submit" value = "Delete">
-    </td>
-  </tr>
-  </form>
+        <tr>
+        <td><%= url %> &rarr;</td>
+        <td><a href="<%= urls[url] %>"><%= urls[url].longURL %></a></td>
+        <td>
+          <a href="/urls/<%= url %>">Edit</a>&nbsp;&nbsp;
+          <form method="POST" action= <%= `/urls/${url}/delete` %>>
+          <input type = "submit" value = "Delete">
+        </td>
+      </tr>
+      </form>
   <% } %>
 </table>
 </br>
