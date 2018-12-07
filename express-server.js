@@ -180,9 +180,9 @@ app.get("/urls/:id", (req, res) => {
 
 //UPDATE existing URL
 app.post("/urls/:id/update", (req, res) => {
-  let shorturl = req.params.id;
-   urlDatabase[shorturl].longurl = req.body.longURL;
-  res.redirect("/urls");
+    let shorturl = req.params.id;
+     urlDatabase[shorturl].longurl = req.body.longURL;
+    res.redirect("/urls");
 });
 
 //DELETE existing long url
