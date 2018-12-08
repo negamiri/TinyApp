@@ -52,7 +52,7 @@ const users = {
 
 //Homepage
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect("/login");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -61,15 +61,19 @@ app.get("/urls.json", (req, res) => {
 
 //REGISTER AND LOGIN
 
-//READ login
+//Login
 app.get("/login", (req, res) => {
   let templateVars = {
     user: users[req.session.userid]
   }
-  res.render("login", templateVars)
+  if (templateVars.user){
+    res.redirect("/urls");
+  } else{
+    res.render("login", templateVars);
+  }
 })
 
-//CREATE login
+//Create login
 app.post('/login', (req, res) => {
   if (req.body["email"] == "" || req.body["password"] == ""){
     res.status('400');
@@ -78,25 +82,29 @@ app.post('/login', (req, res) => {
     req.session.userid = grabId(req.body.email);
     res.redirect("/urls/");
   } else {
-    res.render('login', { errorfeedback: 'Failed to find a user.' })
+    res.send("Incorrect password or email entered.")
   }
 });
 
-//CREATE logout
+//Log out
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect(302, "/urls/");
 });
 
-//READ registration page
+//Registration page
 app.get("/register", (req, res) => {
   let templateVars = {
     user: users[req.session.userid]
   }
-  res.render("registration", templateVars);
+  if (templateVars.user){
+    res.redirect("/urls")
+  } else {
+    res.render("registration", templateVars);
+  }
 });
 
-//CREATE registration
+//Register user in database
 app.post("/register", (req, res) => {
   if (req.body.email == "" || req.body.password == ""){
     res.status('400');
@@ -117,27 +125,26 @@ app.post("/register", (req, res) => {
 });
 
 
-//READ list of all our URLs
+//List of all of user's URLs
 app.get("/urls", (req, res) => {
   const templateVars = {
       urls: urlsForUser(req.session.userid),
       user: users[req.session.userid]
   };
-
   if (templateVars.user) {
     res.render("urls-index", templateVars);
   } else {
-    res.redirect("/login")
+    res.redirect("/login?e=" + encodeURIComponent('Log in to continue'));
   }
 });
 
-//READ form for creating new URLs
+//Page for creating new URL
 app.get("/urls/new", (req, res) => {
   let templateVars = { user: users[req.session.userid] }
   if (templateVars.user) {
     res.render("urls-new", templateVars);
   } else {
-    res.render("login");
+    res.redirect("/login");
   }
 });
 
@@ -157,27 +164,33 @@ app.post("/urls", (req, res) => {
 //READ short URL and redirect to long URL
 app.get("/u/:shortURL", (req, res) => {
   let shorturl = req.params.shortURL;
-  let longURL = urlDatabase[shorturl].longurl;
+  let longURL = (urlDatabase[shorturl] || {longurl: '/notfound' }).longurl;
   if (shorturl) {
-    res.redirect(302, longURL);
+    res.redirect(longURL);
   } else {
-    res.status('404');
-    res.render('notfound');
+    res.status('404').send('Not found');
   }
 });
 
-//READ page of short URL
+app.get("/notfound", (req,res) => {
+  res.status("400").send("Long URL not found");
+})
+
+//View short url
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id].longurl,
     user: users[req.session.userid]
   };
-
-  if (templateVars.user) {
-  res.render("urls-show", templateVars);
+  if (req.session.userid){
+    if (userURL(req)) {
+      res.render("urls-show", templateVars);
+    } else {
+      res.send("You do not own this short URL.");
+    }
   } else {
-    res.render("login");
+    res.redirect("/login");
   }
 });
 
@@ -195,10 +208,6 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
 
 //To ensure server is running
 app.listen(port, () => {
@@ -227,6 +236,7 @@ function emailTaken(req) {
   return false;
 }
 
+//Check login for valid user
 function checkLogin(req) {
   let emailEntered = req.body.email;
   for (let key in users) {
@@ -237,6 +247,7 @@ function checkLogin(req) {
   return false;
 }
 
+//Find user's ID from email address in login
 function grabId (email) {
   for (let key in users) {
     const user = users[key];
@@ -246,6 +257,8 @@ function grabId (email) {
   }
 }
 
+
+//Display user's URLs
 function urlsForUser (id) {
   let resultObject = {};
   for (let url in urlDatabase) {
@@ -260,3 +273,22 @@ function urlsForUser (id) {
   return resultObject;
 }
 
+//Check if user owns URL
+function userURL (req) {
+  let user = req.session.userid;
+  let shorturl = req.params.id;
+  if (urlDatabase[shorturl].userid === user){
+    return true;
+  }
+  return false;
+}
+
+//Check if short URL exists
+function checkShorturl(short) {
+  for (let key in urlDatabase){
+    if (short === key) {
+      return true;
+    }
+  }
+  return false;
+}

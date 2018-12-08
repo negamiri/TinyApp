@@ -5,11 +5,13 @@
   <title>TinyApp - Your short URL</title>
 </head>
 
-<header>
-    <% include partials/_header %>
-</header>
 
-<body leftmargin="100px", topmargin="100px">
+
+<body leftmargin="80px", topmargin="80px" style="background-color: #81D8D5; font-family: Arial">
+
+<h1>Your shortened URL</h1>
+
+<% include partials/_header %>
 
 <h2>Short URL: <%= shortURL %></h2>
 </br>
@@ -17,7 +19,10 @@
   <input id="longURL" type="text" name="longURL" placeholder="<%= longURL%>" style="height: 30px; width: 300px">
   <input type="submit" value="Update">
 </form>
-
+</br>
+</br>
+<button type = "button" padding="10px"><a href="/urls">Take me to my URLs</a></button>
+<button type = "button" padding="10px"><a href="/urls/new">Generate short URL</a></button>
 
 </body>
 

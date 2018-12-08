@@ -5,30 +5,33 @@
   <title>TinyApp - All of your URLs</title>
 </head>
 
-<header>
-    <% include partials/_header %>
-</header>
+<div>
+  <h1>TinyApp</h1>
+  <h2>Your shortened URLs</h2>
+  <% include partials/_header %>
+</div>
 
-<body leftmargin="100px", topmargin="100px">
+
+<body leftmargin="80px", topmargin="80px" style="background-color: #81D8D5; font-family: Arial">
 
 <table cellpadding="8px">
   <% for (let url in urls) { %>
-        <tr>
-        <td><%= url %> &rarr;</td>
-        <td><a href="<%= urls[url] %>"><%= urls[url].longURL %></a></td>
-        <td>
-          <a href="/urls/<%= url %>">Edit</a>&nbsp;&nbsp;
-          <form method="POST" action= <%= `/urls/${url}/delete` %>>
-          <input type = "submit" value = "Delete">
-        </td>
-      </tr>
+    <tr>
+      <td><%= url %> &rarr;</td>
+      <td><a href="<%= urls[url].longURL %>"><%= urls[url].longURL %></a></td>
+      <td>
+      <a href="/urls/<%= url %>">Edit</a>
+      <form method="POST" action= <%= `/urls/${url}/delete` %>>
+      <input type = "submit" value = "Delete">
       </form>
+      </td>
+    </tr>
   <% } %>
 </table>
 </br>
 </br>
 </br>
-<button type = "button" padding="10px"><a href="/urls/new">Generate short URL</a></button>
+<button type = "button" style="font-size: 14px"><a href="/urls/new">Generate short URL</a></button>
 
 </body>
 

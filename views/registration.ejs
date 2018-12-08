@@ -6,11 +6,19 @@
   </head>
 
 
-<body leftmargin="80px", topmargin="80px">
+<body leftmargin="80px", topmargin="80px" style="background-color: #81D8D5; font-family: Arial">
 
+<div>
+  <h1>TinyApp</h1>
+  <h2>Create your account</h2>
+  <% include partials/_header %>
 
-<h1>Register now</h1>
+</div>
 
+</br>
+</br>
+
+<div>
   <form action="/register" method="POST" >
     <label for="RegistrationEmail"><h3>Email</h3></label>
     <input type="email" name="email" style="width: 300px; height: 20px" required>
@@ -22,6 +30,8 @@
   </br>
     <input type="submit" value="Register">
   </form>
+</div>
+
 </br>
 </br>
 <p>Already a member? <a href="/login">Log in now</a></p>

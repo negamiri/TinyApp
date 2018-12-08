@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <title>Login</title>
-  </head>
+<head>
+  <title>Login</title>
+</head>
 
 
-<body leftmargin="80px", topmargin="80px">
+<body leftmargin="80px", topmargin="80px" style="background-color: #81D8D5; font-family: Arial">
+
+<div>
+  <h1>TinyApp</h1>
+  <h2>Log in and start shortening URLs</h2>
+  <% include partials/_header %>
+
+</div>
 
 
-<h1>Login</h1>
+</br>
 
-
+<div>
   <form action="/login" method="POST" >
-    <label for="LoginEmail"><h3>Email</h3></label>
+    <label for="LoginEmail"><h4>Email</h4></label>
     <input type="email" name="email" style="width: 300px; height: 20px" required>
   </br>
-  </br>
-    <label for="LoginPassword"><h3>Password</h3></label>
+    <label for="LoginPassword"><h4>Password</h4></label>
     <input type="password" name="password" style="width: 300px; height: 20px" required>
   </br>
   </br>
@@ -25,7 +31,8 @@
   </form>
   </br>
   </br>
-  <p>Not a member? <a href="/register">Register now</a></p>
+</div>
+  <p><strong>Not a member? <a href="/register">Register now</a></strong></p>
 
 </body>
 

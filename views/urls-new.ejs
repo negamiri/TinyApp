@@ -5,11 +5,16 @@
   <title>TinyApp - Create a new short URL</title>
 </head>
 
-  <body style="font-size:20px; padding:50px;">
+  <body leftmargin="80px", topmargin="80px" style="background-color: #81D8D5; font-family: Arial">
 
-    <% include partials/_header %>
-    <form action="/urls" method="POST" style="margin:150px;">
-      <label for="longURL">Enter a URL:</label>
+    <h1>Shorten a URL</h1>
+  </br>
+  </br>
+
+  <% include partials/_header %>
+
+    <form action="/urls" method="POST">
+      <label for="longURL" style="font-size: 20px;"><strong>Enter a URL:</strong></label>
       <input id="longURL" type="text" name="longURL" placeholder="Start with http://" style="width: 300px">
       <input type="submit" value="Submit">
     </form>
