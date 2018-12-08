@@ -14,8 +14,14 @@
 
 <body leftmargin="80px", topmargin="80px" style="background-color: #81D8D5; font-family: Arial">
 
+
 <table cellpadding="8px">
-  <% for (let url in urls) { %>
+    <tr>
+      <td><strong>Short URL</strong></td>
+      <td><strong>Long URL</strong></td>
+      <td><strong>Actions</strong></td>
+    </tr>
+<% for (let url in urls) { %>
     <tr>
       <td><%= url %> &rarr;</td>
       <td><a href="<%= urls[url].longURL %>"><%= urls[url].longURL %></a></td>
