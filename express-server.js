@@ -64,7 +64,7 @@ app.get("/urls.json", (req, res) => {
 //Login
 app.get("/login", (req, res) => {
   let templateVars = {
-    user: users[req.session.userid]
+    user: users[req.session.userid],
   }
   if (templateVars.user){
     res.redirect("/urls");
@@ -80,6 +80,7 @@ app.post('/login', (req, res) => {
     res.send("Please provide an email and password to login")
   } else if (checkLogin(req)) {
     req.session.userid = grabId(req.body.email);
+    delete res.session.error;
     res.redirect("/urls/");
   } else {
     res.send("Incorrect password or email entered.")
@@ -168,7 +169,7 @@ app.get("/u/:shortURL", (req, res) => {
   if (shorturl) {
     res.redirect(longURL);
   } else {
-    res.status('404').send('Not found');
+    res.status("404").send('Not found');
   }
 });
 
@@ -180,7 +181,7 @@ app.get("/notfound", (req,res) => {
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id].longurl,
+    longURL: (urlDatabase[req.params.id] || {longurl: '/notfound' }).longurl,
     user: users[req.session.userid]
   };
   if (req.session.userid){
@@ -190,15 +191,15 @@ app.get("/urls/:id", (req, res) => {
       res.send("You do not own this short URL.");
     }
   } else {
-    res.redirect("/login");
+    res.status("404").send("Please log in to continue");
   }
 });
 
 //UPDATE existing URL
 app.post("/urls/:id/update", (req, res) => {
-    let shorturl = req.params.id;
-     urlDatabase[shorturl].longurl = req.body.longURL;
-    res.redirect("/urls");
+  let shorturl = req.params.id;
+  urlDatabase[shorturl].longurl = req.body.longURL;
+  res.redirect("/urls");
 });
 
 //DELETE existing long url
